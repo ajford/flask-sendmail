@@ -1,0 +1,5 @@
+Flask-Sendmail is a Flask extension providing a simple interface for the
+system's sendmail client.
+
+Flask-Sendmail is also inteded to be a drop-in replacement for Flask-Mail.
+
