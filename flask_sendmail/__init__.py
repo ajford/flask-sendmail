@@ -1,14 +1,22 @@
 """
-Module provides an interface to the system's sendmail client.
+    flask_sendmail
+    ~~~~~~~~~~~~~~
+    
+    Module provides an interface to the system's sendmail client.
 
-It's based heavily off of Flask-Mail (originaly by danjac),
-and owes a majority of its code to him.
+    It's based heavily off of Flask-Mail (written by danjac),
+    and owes a majority of its code to it.
 
+    It's also designed to be a nearly complete drop-in replacement
+    for Flask-Mail.
+
+    :copyright: (c) 2012 by Anthony Ford.
+    :license: None, see LICENSE for more details.
 """
-from flask.ext.sendmail.message import Message
-from flask.ext.sendmail.connection import Connection
+from flask_sendmail.message import Message, BadHeaderError
+from flask_sendmail.connection import Connection
 
-class Mailer(object):
+class Mail(object):
 
     def __init__(self,app=None):
         if app is not None:
@@ -18,7 +26,7 @@ class Mailer(object):
         """
         Initializes your mail settings from app.config
 
-        Can be used to set up the Mailer at configuration time
+        Can be used to set up Mail at configuration time
 
         :param app: Flask application instance
         """
@@ -28,11 +36,11 @@ class Mailer(object):
         self.mailer_flags = app.config.get('MAIL_MAILER_FLAGS','-t')
         self.suppress = app.config.get('MAIL_SUPPRESS_SEND', False)
         self.fail_silently = app.config.get('MAIL_FAIL_SILENTLY', True)
-
+        self.max_emails=None
         self.suppress = self.suppress or app.testing
         self.app = app
 
-        #register extenshion with app
+        #register extension with app
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['sendmail'] = self
 
@@ -40,7 +48,7 @@ class Mailer(object):
         """
         Sends message through system's sendmail client.
 
-        :param message: Mailer Message instance
+        :param message: Mail Message instance
         """
 
         with self.connect() as connection:
@@ -60,4 +68,4 @@ class Mailer(object):
         Opens a connection to the system's sendmail client.
         """
 
-        return Connection(self, max_email)
+        return Connection(self, max_emails)

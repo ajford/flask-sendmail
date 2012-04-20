@@ -31,10 +31,6 @@ class Message(object):
             app = stack.top.app
             sender = app.config.get("DEFAULT_MAIL_SENDER")
 
-        if isinstance(sender, tuple):
-            # sender can be tuple of (name, address)
-            sender = "%s <%s>" % sender
-
         self.subject = subject
         self.sender = sender
         self.body = body
@@ -58,7 +54,7 @@ class Message(object):
         """
         Adds another recipient to the message.
 
-        :param recipient: email address of recipient.
+        :param recipient: email address.
         """
 
         self.recipients.append(recipient)
@@ -74,20 +70,31 @@ class Message(object):
                 if c in val:
                     return True
         return False
-    
+   
     def dump(self):
         if self.html:
             msg = MIMEText(self.html,'html')
         elif self.body:
             msg = MIMEText(self.body)
+
+        if isinstance(self.sender, tuple):
+            # sender can be tuple of (name, address)
+            self.sender = "%s <%s>" % self.sender
+        
         
         msg['Subject'] = self.subject
         msg['To'] = ', '.join(self.recipients) 
         msg['From'] = self.sender
         if self.cc:
-            msg['CC'] = self.cc
+            if hasattr(self.cc,'__iter__'):
+                msg['Cc'] = ', '.join(self.cc)
+            else:
+                msg['Cc'] = self.cc
         if self.bcc:
-            msg['BCC'] = self.bcc
+            if hasattr(self.bcc,'__iter__'):
+                msg['Bcc'] = ', '.join(self.bcc)
+            else:
+                msg['Bcc'] = self.bcc
         if self.reply_to:
             msg['Reply-To'] = self.reply_to
 
