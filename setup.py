@@ -10,7 +10,7 @@ Please refer to the online documentation for details.
 Links
 `````
 
-* `documentation <http://packages.python.org/Flask-Mail>`_
+* `documentation <http://packages.python.org/Flask-Sendmail>`_
 * `development version
   <https://github.com/ajford/flask-sendmail/tarball/master#egg=Flask-Sendmail>`_
 """
@@ -27,16 +27,15 @@ setup(
     description='Flask extension for sendmail',
     long_description=__doc__,
     packages=['flask_sendmail'],
-    #test_suite='nose.collector',
+    test_suite='nose.collector',
     zip_safe=False,
     platforms='any',
     install_requires=[
         'Flask',
     ],
-    #tests_require=[
-        #'nose',
-        #'blinker',
-    #],
+    tests_require=[
+        'nose',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
