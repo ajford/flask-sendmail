@@ -15,3 +15,4 @@
 """
 
 from .mail import Mail
+from .message import Message, BadHeaderError
