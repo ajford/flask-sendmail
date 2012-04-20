@@ -16,3 +16,4 @@
 
 from .mail import Mail
 from .message import Message, BadHeaderError
+from .connection import Connection
