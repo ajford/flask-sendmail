@@ -1,11 +1,13 @@
 from email.mime.text import MIMEText
 
 try:
-        from flask import _app_ctx_stack as stack
+    from flask import _app_ctx_stack as stack
 except ImportError:
-        from flask import _request_ctx_stack as stack
+    from flask import _request_ctx_stack as stack
 
-class BadHeaderError(Exception): pass
+
+class BadHeaderError(Exception):
+    pass
 
 
 class Message(object):
@@ -25,7 +27,7 @@ class Message(object):
 
     def __init__(self, subject, recipients=None, body=None, html=None,
                 sender=None, cc=None, bcc=None, attachments=None,
-                reply_to=None): 
+                reply_to=None):
 
         if sender is None:
             app = stack.top.app
@@ -49,7 +51,7 @@ class Message(object):
             attachments = []
 
         self.attachments = attachments
- 
+
     def add_recipient(self, recipient):
         """
         Adds another recipient to the message.
@@ -70,28 +72,27 @@ class Message(object):
                 if c in val:
                     return True
         return False
-   
+
     def dump(self):
         if self.html:
-            msg = MIMEText(self.html,'html')
+            msg = MIMEText(self.html, 'html')
         elif self.body:
             msg = MIMEText(self.body)
 
         if isinstance(self.sender, tuple):
             # sender can be tuple of (name, address)
             self.sender = "%s <%s>" % self.sender
-        
-        
+
         msg['Subject'] = self.subject
-        msg['To'] = ', '.join(self.recipients) 
+        msg['To'] = ', '.join(self.recipients)
         msg['From'] = self.sender
         if self.cc:
-            if hasattr(self.cc,'__iter__'):
+            if hasattr(self.cc, '__iter__'):
                 msg['Cc'] = ', '.join(self.cc)
             else:
                 msg['Cc'] = self.cc
         if self.bcc:
-            if hasattr(self.bcc,'__iter__'):
+            if hasattr(self.bcc, '__iter__'):
                 msg['Bcc'] = ', '.join(self.bcc)
             else:
                 msg['Bcc'] = self.bcc
@@ -103,7 +104,7 @@ class Message(object):
     def send(self, connection):
         """
         Verifies and sends the message.
-        
+
         :param connection: Connection instance
         """
 
@@ -113,5 +114,5 @@ class Message(object):
 
         if self.is_bad_headers():
             raise BadHeaderError
-        
+
         connection.send(self)
