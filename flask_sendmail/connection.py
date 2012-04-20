@@ -1,4 +1,4 @@
-from subprocess import PIPE,STDOUT,Popen
+from subprocess import PIPE, STDOUT, Popen
 
 from flask_sendmail.message import Message
 
@@ -17,12 +17,12 @@ class Connection(object):
     def __enter__(self):
         pass
 
-    def send(self,message):
-        sm = Popen([self.mailer,self.mailer_flags], stdin=PIPE, stdout=PIPE,
+    def send(self, message):
+        sm = Popen([self.mailer, self.mailer_flags], stdin=PIPE, stdout=PIPE,
                     stderr=STDOUT)
         sm.stdin.write(message.dump())
         sm.communicate()
-        
+
         return sm.returncode
 
     def __exit__(self, exc_type, exc_value, tb):
@@ -36,4 +36,3 @@ class Connection(object):
         """
 
         self.send(Message(*args, **kwargs))
-
