@@ -1,4 +1,4 @@
-flask-sendmail
+Flask-Sendmail
 ======================================
 
 .. module:: flask-mail
