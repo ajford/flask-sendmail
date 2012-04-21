@@ -3,3 +3,6 @@ system's sendmail client.
 
 Flask-Sendmail is also inteded to be a drop-in replacement for Flask-Mail.
 
+Online documentation is available at [flask-sendmail.readthedocs.org][]
+
+[flask-sendmail.readthedocs.org]: http://flask-sendmail.readthedocs.org
