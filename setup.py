@@ -10,7 +10,7 @@ Please refer to the online documentation for details.
 Links
 `````
 
-* `documentation <http://packages.python.org/Flask-Sendmail>`_
+* `documentation <http://flask-sendmail.readthedocs.org>`_
 * `development version
   <https://github.com/ajford/flask-sendmail/tarball/master#egg=Flask-Sendmail>`_
 """
