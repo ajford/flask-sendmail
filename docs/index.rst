@@ -3,15 +3,15 @@ Flask-Sendmail
 
 .. module:: flask-mail
 
-Emailing users if essential in most web applications. For most cases, you can
+Emailing users is essential in most web applications. For most cases, you can
 easily use SMTP, and in those cases, `Flask-Mail`_ is perfect. In other cases,
 you can only use your system's ``sendmail`` client.
 
 The **Flask-Sendmail** extension provides a simple interface to your system's
-sendmail client from within your `Flask`_ application and to send messages from
-your views and scripts.
+sendmail client from within your `Flask`_ application and gives you ability to 
+send messages from your views and scripts.
 
-Source code and issue tracking at `GitHub`_.
+Source code and issue tracking are at `GitHub`_.
 
 Installing Flask-Sendmail
 -------------------------
