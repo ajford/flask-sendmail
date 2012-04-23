@@ -18,8 +18,8 @@ class Connection(object):
         pass
 
     def send(self, message):
-        sm = Popen([self.mailer, self.mailer_flags], stdin=PIPE, stdout=PIPE,
-                    stderr=STDOUT)
+        sm = Popen([self.mail.mailer, self.mail.mailer_flags], stdin=PIPE,
+                   stdout=PIPE, stderr=STDOUT)
         sm.stdin.write(message.dump())
         sm.communicate()
 

@@ -37,8 +37,7 @@ class Mail(object):
         :param message: Mail Message instance
         """
 
-        with self.connect() as connection:
-            message.send(connection)
+        message.send(self.connect())
 
     def send_message(self, *args, **kwargs):
         """
