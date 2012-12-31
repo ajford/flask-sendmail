@@ -14,6 +14,11 @@ Links
 * `development version
   <https://github.com/ajford/flask-sendmail/tarball/master#egg=Flask-Sendmail>`_
 """
+try:
+    import multiprocessing
+except ImportError:
+    pass
+
 from setuptools import setup
 
 
