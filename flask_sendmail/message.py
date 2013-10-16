@@ -23,11 +23,12 @@ class Message(object):
     :param bcc: BCC list
     :param attachments: list of Attachment instances
     :param reply_to: reply-to address
+    :param charset: used to set MIMEText _charset
     """
 
     def __init__(self, subject, recipients=None, body=None, html=None,
                 sender=None, cc=None, bcc=None, attachments=None,
-                reply_to=None):
+                reply_to=None, charset=None):
 
         if sender is None:
             app = stack.top.app
@@ -37,7 +38,7 @@ class Message(object):
         self.sender = sender
         self.body = body
         self.html = html
-
+        self.charset = charset
         self.cc = cc
         self.bcc = bcc
         self.reply_to = reply_to
@@ -75,9 +76,9 @@ class Message(object):
 
     def dump(self):
         if self.html:
-            msg = MIMEText(self.html, 'html')
+            msg = MIMEText(self.html, 'html', self.charset)
         elif self.body:
-            msg = MIMEText(self.body)
+            msg = MIMEText(self.html, 'plain', self.charset)
 
         if isinstance(self.sender, tuple):
             # sender can be tuple of (name, address)
