@@ -14,6 +14,8 @@
     :license: None, see LICENSE for more details.
 """
 
+__version__ = '0.2'
+
 from .mail import Mail
 from .message import Message, BadHeaderError
 from .connection import Connection
