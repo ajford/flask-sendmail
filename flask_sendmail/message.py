@@ -1,4 +1,5 @@
 from email.mime.text import MIMEText
+import sys
 
 try:
     from flask import _app_ctx_stack as stack
@@ -78,7 +79,7 @@ class Message(object):
         if self.html:
             msg = MIMEText(self.html, 'html', self.charset)
         elif self.body:
-            msg = MIMEText(self.html, 'plain', self.charset)
+            msg = MIMEText(self.body, 'plain', self.charset)
 
         if isinstance(self.sender, tuple):
             # sender can be tuple of (name, address)
@@ -100,7 +101,11 @@ class Message(object):
         if self.reply_to:
             msg['Reply-To'] = self.reply_to
 
-        return msg.as_string()
+        msg_str = msg.as_string()
+        if sys.version_info >= (3,0) and isinstance(msg_str, str):
+            return msg_str.encode(self.charset or 'utf-8')
+        else:
+            return msg_str
 
     def send(self, connection):
         """
