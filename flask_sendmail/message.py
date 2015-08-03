@@ -1,10 +1,34 @@
+from email.encoders import encode_base64
+from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 import sys
 
 try:
     from flask import _app_ctx_stack as stack
 except ImportError:
     from flask import _request_ctx_stack as stack
+
+PY3 = sys.version_info[0] == 3
+
+
+class Attachment(object):
+    """Encapsulates file attachment information.
+
+    :param filename: filename of attachment
+    :param content_type: file mimetype
+    :param data: the raw file data
+    :param disposition: content-disposition (if any)
+    """
+
+    def __init__(self, filename=None, content_type=None, data=None,
+                 disposition=None, headers=None):
+        self.filename = filename
+        self.content_type = content_type or 'application/octet-stream'
+        self.data = data
+        self.disposition = disposition or 'attachment'
+        self.headers = headers or {}
 
 
 class BadHeaderError(Exception):
@@ -63,6 +87,26 @@ class Message(object):
 
         self.recipients.append(recipient)
 
+
+    def add_attachment(self,
+                       filename=None,
+                       content_type=None,
+                       data=None,
+                       disposition=None,
+                       headers=None):
+        """
+        Adds an attachment to the message.
+
+        :param filename: filename of attachment
+        :param content_type: file mimetype
+        :param data: the raw file data
+        :param disposition: content-disposition (if any)
+        """
+        self.attachments.append(
+            Attachment(filename, content_type, data, disposition, headers))
+
+        return self
+
     def is_bad_headers(self):
         """
         Checks for bad headers i.e. newlines in subject, sender or recipients.
@@ -76,10 +120,20 @@ class Message(object):
         return False
 
     def dump(self):
-        if self.html:
-            msg = MIMEText(self.html, 'html', self.charset)
-        elif self.body:
+        attachments = self.attachments or []
+
+        if len(attachments) == 0 and not self.html:
+            # No HTML without attachments - plain text email
             msg = MIMEText(self.body, 'plain', self.charset)
+        elif len(attachments) > 0 and not self.html:
+            # No HTML with attachments means multipart
+            msg = MIMEMultipart()
+            msg.attach(MIMEText(self.body, 'plain', self.charset))
+        else:
+            msg = MIMEMultipart()
+            alt = MIMEMultipart('alternative')
+            alt.attach(self.html, 'html', self.charset)
+            msg.attach(alt)
 
         if isinstance(self.sender, tuple):
             # sender can be tuple of (name, address)
@@ -100,6 +154,33 @@ class Message(object):
                 msg['Bcc'] = self.bcc
         if self.reply_to:
             msg['Reply-To'] = self.reply_to
+
+        # Attachments
+        for attachment in attachments:
+            f = MIMEBase(*attachment.content_type.split('/'))
+            f.set_payload(attachment.data)
+            encode_base64(f)
+
+            filename = attachment.filename
+
+            # TODO: Optional force filename to ASCII
+
+            try:
+                filename and filename.encode('ascii')
+            except UnicodeEncodeError:
+                if not PY3:
+                    filename = filename.encode('utf-8')
+                filename = ('UTF-8', '', filename)
+
+            f.add_header('Content-Disposition',
+                         attachment.disposition,
+                         filename=filename)
+
+            for k, v in attachment.headers.items():
+                f.add_header(k, v)
+
+            msg.attach(f)
+
 
         msg_str = msg.as_string()
         if sys.version_info >= (3,0) and isinstance(msg_str, str):
