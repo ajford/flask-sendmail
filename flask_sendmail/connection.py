@@ -20,7 +20,7 @@ class Connection(object):
     def send(self, message):
         sm = Popen([self.mail.mailer, self.mail.mailer_flags], stdin=PIPE,
                    stdout=PIPE, stderr=STDOUT)
-        sm.stdin.write(message.dump())
+        sm.stdin.write(message.dump().encode())
         sm.communicate()
 
         return sm.returncode
