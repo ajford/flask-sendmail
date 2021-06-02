@@ -18,6 +18,9 @@ class Connection(object):
         pass
 
     def send(self, message):
+        if self.suppress:
+            return 0
+
         sm = Popen([self.mail.mailer, self.mail.mailer_flags], stdin=PIPE,
                    stdout=PIPE, stderr=STDOUT)
         sm.stdin.write(message.dump())
